@@ -1,0 +1,69 @@
+version: '3.7'
+
+services:
+  nginx:
+    build: ./requirements/nginx
+    image: nginx:nginx
+    container_name: nginx
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - wordpress
+    networks:
+      - incepnet
+    ports:
+      - 443:443
+    volumes:
+      - vol_wp:/var/www/html:rw
+
+  mariadb:
+    build: ./requirements/mariadb
+    image: mariadb:mariadb
+    container_name: mariadb
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - incepnet
+    volumes:
+      - vol_db:/var/lib/mysql:rw
+
+
+  wordpress:
+    build: ./requirements/nginx
+    image: nginx:nginx
+    container_name: nginx
+    depends_on:
+      - wordpress
+    env_file:
+      - .env
+    restart: always
+    networks:
+      - incepnet
+    volumes:
+      - vol_wp:/var/www/html:rw
+
+
+
+networks:
+  incepnet:
+    driver: bridge
+    
+
+volumes:
+  vol_db:
+    name: vol_db
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/youlam/data/vol_db
+      o: bind
+
+  vol_wp:
+    name: vol_wp
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/youlam/data/vol_wp
+      o: bind
