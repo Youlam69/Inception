@@ -57,7 +57,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/youlam/data/vol_db
+      device: /Users/ylamraou/Desktop/data/vol_db
       o: bind
 
   vol_wp:
@@ -65,5 +65,5 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/youlam/data/vol_wp
+      device: /Users/ylamraou/Desktop/data/vol_wp
       o: bind
