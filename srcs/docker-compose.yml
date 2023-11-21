@@ -3,7 +3,6 @@ version: '3.7'
 services:
   nginx:
     build: ./requirements/nginx
-    image: nginx:nginx
     container_name: nginx
     restart: always
     env_file:
@@ -19,7 +18,6 @@ services:
 
   mariadb:
     build: ./requirements/mariadb
-    image: mariadb:mariadb
     container_name: mariadb
     env_file:
       - .env
@@ -31,26 +29,24 @@ services:
 
 
   wordpress:
-    build: ./requirements/nginx
-    image: nginx:nginx
-    container_name: nginx
+    build: ./requirements/wordpress
+    container_name: wordpress
     depends_on:
-      - wordpress
+      - mariadb
     env_file:
       - .env
     restart: always
     networks:
       - incepnet
+    ports:
+      - 9000:9000
     volumes:
       - vol_wp:/var/www/html:rw
-
-
 
 networks:
   incepnet:
     driver: bridge
     
-
 volumes:
   vol_db:
     name: vol_db

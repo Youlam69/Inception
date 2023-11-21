@@ -1,18 +1,13 @@
 FROM debian:bullseye
 
-RUN apt-get update && apt-get upgrade -y && apt-get install -y mariadb-server
+RUN apt-get update && apt-get upgrade -y && apt-get install mariadb-server -y
 
-COPY ./srcs/wordpress.sql /tmp/wordpress.sql
+COPY ./tools/script_mariadb.sh /
 
-COPY ./srcs/mariadb-server.cnf /etc/mysql/mariadb.conf.d/50-server.cnf
-
-COPY ./srcs/init.sh /tmp/init.sh
-
-RUN chmod 755 /tmp/init.sh
+# COPY tools/database.conf /etc/mysql/mariadb.conf.d/50-server.cnf
 
 EXPOSE 3306
 
-CMD ["/tmp/init.sh"]
+RUN chmod +x /script_mariadb.sh
 
-# Path: srcs/requirements/wordpress/Dockerfile
-
+ENTRYPOINT ["/script_mariadb.sh"]
