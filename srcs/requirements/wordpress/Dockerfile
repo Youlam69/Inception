@@ -14,4 +14,4 @@ COPY ./tools/script_wp.sh /tmp/worpress.sh
 
 EXPOSE 9000
 
-CMD ["bash", "/tmp/worpress.sh"]
+CMD ["bash"]
