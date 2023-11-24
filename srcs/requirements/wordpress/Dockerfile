@@ -10,8 +10,10 @@ RUN wget https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.ph
     && chmod +x wp-cli.phar \
     && mv wp-cli.phar /usr/local/bin/wp
 
-COPY ./tools/script_wp.sh /tmp/worpress.sh
+COPY ./tools/script_wp.sh /
+
+RUN chmod +x script_wp.sh
 
 EXPOSE 9000
 
-CMD ["bash"]
+CMD ["./script_wp.sh"]
