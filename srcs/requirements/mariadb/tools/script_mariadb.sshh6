@@ -1,0 +1,49 @@
+#!/bin/bash
+
+# Update MySQL/MariaDB configuration
+sed -i "s/bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
+
+# Create necessary directories and set permissions
+mkdir -p /var/lib/mysql \
+    && chown -R mysql:mysql /var/lib/mysql \
+    && chmod 777 /var/lib/mysql
+
+mkdir -p /var/run/mysqld \
+    && chown -R mysql:mysql /var/run/mysqld \
+    && chmod 777 /var/run/mysqld
+
+# Start MariaDB service
+mysqld --skip-grant-tables --user=mysql &
+pid="$!"
+
+# Wait for MariaDB to start (you can adjust the sleep time if needed)
+sleep 10
+
+# Check if the database exists
+if mysql -u"$DB_USER" -p"$DB_PASSWORD" -e "use $DB_NAME" 2>/dev/null; then
+  echo "Database '$DB_NAME' already exists."
+  # You might choose to exit the script or take alternative actions here.
+else
+  # Attempt to create the database and user
+  mysql -u root -e "CREATE DATABASE $DB_NAME;"
+  mysql -u root -e "CREATE USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
+  mysql -u root -e "GRANT ALL ON $DB_NAME.* TO '$DB_USER'@'localhost'; FLUSH PRIVILEGES;"
+
+  # Check for successful creation
+  if [ $? -eq 0 ]; then
+    echo "Database '$DB_NAME' and user '$DB_USER' created successfully."
+  else
+    echo "Error creating database '$DB_NAME' or user '$DB_USER'. Exiting script."
+    exit 1
+  fi
+fi
+
+# Alter root user password
+mysql -u root -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD_ROOT'; FLUSH PRIVILEGES;"
+
+# Stop MariaDB service
+kill -TERM "$pid"
+
+# Wait for the process to exit
+wait "$pid"
+

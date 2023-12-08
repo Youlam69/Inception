@@ -1,0 +1,40 @@
+#!/bin/bash
+
+sed -i "s/bind-address.*/bind-address = 0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf
+
+mkdir -p /var/lib/mysql \
+    && chown -R mysql:mysql /var/lib/mysql \
+    && chmod 777 /var/lib/mysql
+
+mkdir -p /var/run/mysqld \
+    && chown -R mysql:mysql /var/run/mysqld \
+    && chmod 777 /var/run/mysqld
+
+service mariadb start
+
+# Check if the database exists
+if mysql -u"$DB_USER" -p"$DB_PASSWORD" -e "use $DB_NAME" 2>/dev/null; then
+  echo "Database '$DB_NAME' already exists."
+  # You might choose to exit the script or take alternative actions here.
+else
+  # Attempt to create the database
+  mysql -u"$DB_USER" -p"$DB_PASSWORD" -e "create database $DB_NAME"
+
+  # Check for successful creation
+  if [ $? -eq 0 ]; then
+    echo "Database '$DB_NAME' created successfully."
+  else
+    echo "Error creating database '$DB_NAME'. Exiting script."
+    exit 1
+  fi
+fi
+
+# Alter root user password
+mysql -u root -p"$DB_PASSWORD_ROOT" -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '$DB_PASSWORD_ROOT'; FLUSH PRIVILEGES;"
+
+# Stop MariaDB service
+service mariadb stop
+
+# Start MariaDB server
+mysqld
+
