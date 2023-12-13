@@ -16,4 +16,4 @@ RUN chmod +x script_wp.sh
 
 EXPOSE 9000
 
-CMD ["./script_wp.sh"]
+CMD ["bash", "/script_wp.sh"]

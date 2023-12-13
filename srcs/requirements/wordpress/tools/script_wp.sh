@@ -17,3 +17,4 @@ wp			user create ${WP_USER} ${WP_EMAIL1} --role=author --user_pass=${WP_USERPWD}
 
 service php7.4-fpm stop
 php-fpm7.4 -F
+
