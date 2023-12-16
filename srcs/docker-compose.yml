@@ -27,7 +27,6 @@ services:
     volumes:
       - vol_db:/var/lib/mysql:rw
 
-
   wordpress:
     build: ./requirements/wordpress
     container_name: wordpress
@@ -53,6 +52,7 @@ volumes:
     driver: local
     driver_opts:
       type: none
+      # device: /home/ylamraou/data/vol_db
       device: /Users/ylamraou/Desktop/data/vol_db
       o: bind
 
@@ -61,5 +61,6 @@ volumes:
     driver: local
     driver_opts:
       type: none
+      # device: /home/ylamraou/data/vol_wp
       device: /Users/ylamraou/Desktop/data/vol_wp
       o: bind
